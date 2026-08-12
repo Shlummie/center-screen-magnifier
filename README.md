@@ -28,6 +28,8 @@ Run [Build Center Magnifier Native.bat](Build%20Center%20Magnifier%20Native.bat)
 cl /nologo /std:c++17 /EHsc /W4 /permissive- /O2 center_magnifier_native.cpp /Fe:CenterMagnifierNative.exe
 ```
 
+Requirements are Windows 10/11, the Visual C++ build tools, and the Windows SDK. The executable is intentionally omitted from version control and must be built locally.
+
 The native app and its config file live here:
 
 ```text
@@ -54,3 +56,24 @@ CenterDotSize=7
 `ZoomModifierButton` accepts the same values. The tray menu has a `Wheel Zoom Modifier` submenu with common presets and the same capture option.
 `TargetFps` is clamped to the supported `5` through `240` FPS range.
 `CenterDotEnabled` accepts `true` or `false`; `CenterDotSize` is clamped from `3` through `31` pixels.
+
+## How it works
+
+```text
+global mouse/keyboard input -> trigger state -> Magnification API window
+mouse wheel + modifier ----------------------> zoom update
+tray/config ---------------------------------> size, FPS, dot, and bindings
+```
+
+The process creates a centered topmost magnifier window with the Windows Magnification API. The optional center dot is an independent overlay. Configuration is stored beside the executable; no account, telemetry, or network service is used.
+
+## Limitations and safety
+
+- Windows only; availability depends on `Magnification.dll` and desktop composition.
+- Some exclusive-fullscreen, protected, elevated, or hardware-overlay content may not be magnified.
+- Global input hooks can conflict with games or other utilities. Choose bindings that do not trigger destructive application actions.
+- Very high refresh rates increase CPU/GPU use without guaranteeing that the source content updates as quickly.
+
+## License
+
+MIT. Windows platform components retain their applicable license terms.
